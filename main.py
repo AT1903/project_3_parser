@@ -2,6 +2,7 @@ import requests
 #from bs4 import BeautifulSoup as bs
 import asyncio
 #import aiohttp
+#тест для гит
 
 
 url = 'https://chastotnik.shop/preobrazovateli-chastoti'
