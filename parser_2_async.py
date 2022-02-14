@@ -28,6 +28,7 @@ import datetime
 start_time = time.time()#время начала выполнения скрипта
 refs_homepage = [] #создаем список для хранения ссылок с главной страницы
 refs_page2 = [] #создаем список для хранения ссылок со страницы 2-го уровня
+result = dict() #словарь со сслыками
 
 headers = {
             'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -50,14 +51,19 @@ def fun_parser_homepage():
 #Асинхронная функция парсинга ссылок со страницы 2-го уровня
 async def fun_asy_parser_2page(session, url,num):
     async with session.get(url=url, headers=headers) as response:
-        #response_text = await response.text()      
-        #response = await requests.get(url=url, headers=headers)
+        refs_page2=[]
         response_text = await response.text()
         soup = BeautifulSoup(response_text, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python
+        #поиск названия страницы 2 го уровня
+        refs1 = soup.find('div', class_= "card card-category").find('h1').text
+        print (refs1)
+        result[refs1]=[]
         refs = soup.find('div', class_= "card card-subcategory").find_all('a') #поиск всех элементов типа "а" со страницы 2    
         for link in refs:        
             refs_page2.append(link.get('href')) #копируем в список все найденный ссылки
+            
         print(f'обработал {num} из {len(refs_homepage)} результатов')
+        result[refs1] = refs_page2
         #print (*refs_page2, sep = "\n") # печать результатов
 
 #создаем асинхронную функция для формирование списка задач (страницы 2го уровня)
@@ -91,6 +97,10 @@ def main():
     print('************************************************')
     print('*****************FINISH*************************')
     print('************************************************')
+    for key, value in result.items():
+        print(key)
+        print(*value, sep = "\n")
+    
 
 
 if __name__ == '__main__': 
