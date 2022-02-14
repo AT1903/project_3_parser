@@ -67,6 +67,7 @@ async def fun_asy_parser_2page(session, url):
         refs = soup.find('div', class_= "card card-subcategory").find_all('a') #поиск всех элементов типа "а" со страницы 2    
         for link in refs:        
             refs_page2.append(link.get('href')) #копируем в список все найденный ссылки
+        print(f'обработал {} из {len()} результатов')
         #print (*refs_page2, sep = "\n") # печать результатов
 
 #создаем асинхронную функция для парсинга  
@@ -107,12 +108,15 @@ def main():
 
     fun_parser_homepage()
 
+    #запуск последовательного парсинга
     #for r in refs_homepage:
     #    fun_parser_2page(r)#refs_homepage[0])
     #print (*refs_page2, sep = "\n") # печать результатов
 
     #запуск асинхронного парсинга
     asyncio.run(fun_creater_tasks())
+
+
     print (*refs_page2, sep = "\n") # печать результатов
 
     finish_time = time.time() - start_time #общее время выполнения скрипта
