@@ -63,7 +63,7 @@ async def fun_asy_parser_2page(session, url):
         #response_text = await response.text()      
         #response = await requests.get(url=url, headers=headers)
         response_text = await response.text()
-        soup = BeautifulSoup(await response_text, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python
+        soup = BeautifulSoup(response_text, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python
         refs = soup.find('div', class_= "card card-subcategory").find_all('a') #поиск всех элементов типа "а" со страницы 2    
         for link in refs:        
             refs_page2.append(link.get('href')) #копируем в список все найденный ссылки
@@ -117,7 +117,9 @@ def main():
 
     finish_time = time.time() - start_time #общее время выполнения скрипта
     print(f'Затраченное время: {finish_time}')
-
+    print('************************************************')
+    print('************************************************')
+    print('************************************************')
 
 
 if __name__ == '__main__': 
