@@ -1,5 +1,6 @@
 
 import asyncio
+from itertools import count
 #Модуль asyncio предоставляет инструменты для создания асинхронных/параллельных приложений 
     # с использованием сопрограмм. 
     #
@@ -39,6 +40,16 @@ print('--------------------------')
 print('-----start parser---------')
 print('--------------------------')
 
+#функция вывода вложенных словарей
+def print_d(d, indent=0):
+    s = "...."
+    for key, value in d.items():
+        print(s * indent + str(key))
+        if isinstance(value, dict): # вернет True, если проверяемый объект object является экземпляром словаря
+            print_d(value, indent+1)
+        else:
+            print(s * (indent+1) + str(value))
+
 #Функция парсинга ссылок с главной страницы
 def fun_parser_homepage():
     url = 'https://chastotnik.shop/'
@@ -51,19 +62,33 @@ def fun_parser_homepage():
 #Асинхронная функция парсинга ссылок со страницы 2-го уровня
 async def fun_asy_parser_2page(session, url,num):
     async with session.get(url=url, headers=headers) as response:
-        #refs_page2=[]
         response_text = await response.text() #await означает что при выполнение следующего за ней кода возможно переключение на другую сопрограмму
         soup = BeautifulSoup(response_text, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python       
         refs1 = soup.find('div', class_= "card card-category").find('h1').text #поиск названия страницы 2 го уровня
         print (refs1) #вывод обнаруженного названия - для информации
         result[refs1]=dict() #создание ключа словаря 2 го уровня
-        refs = soup.find('div', class_= "card card-subcategory").find_all('a') #поиск всех элементов типа "а" со страницы 2    
-        for link in refs:        
-            #refs_page2.append(link.get('href')) #копируем в список все найденный ссылки
-            result[refs1][link.get('href')]=[]  
+        refs = soup.find('div', class_= "card card-subcategory").find_all('a') #поиск всех элементов типа "а" со страницы 2
+        for link in refs:
+            result[refs1][link.get('href')]=dict()
         print(f'обработал {num} из {len(refs_homepage)} результатов')
-        #result[refs1] = refs_page2
-        #print (*refs_page2, sep = "\n") # печать результатов
+
+#Асинхронная функция парсинга ссылок со страницы 3-го уровня
+async def fun_asy_parser_3page(session, url,num,d):
+    async with session.get(url=url, headers=headers) as response:
+        response_text = await response.text() #await означает что при выполнение следующего за ней кода возможно переключение на другую сопрограмму
+        soup = BeautifulSoup(response_text, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python             
+        refs1 = soup.find('div', class_= "card card-category").find('h1').text #поиск названия страницы 2 го уровня
+        print (refs1) #вывод обнаруженного названия - для информации
+        print (d)
+        d[refs1]=dict() #создание ключа словаря 2 го уровня        
+        try:
+            refs = soup.find('div', class_= "card card-subcategory").find_all('a') #поиск всех элементов типа "а" со страницы 2
+            for link in refs:
+                d[refs1][link.get('href')]=[]
+            print(f'обработал {num} из {len(d)} результатов')
+        except:            
+             print('не обнаружено',num)
+
 
 #создаем асинхронную функция для формирование списка задач (страницы 2го уровня)
 async def fun_creater_tasks_2():  
@@ -78,6 +103,24 @@ async def fun_creater_tasks_2():
             c+=1
         await asyncio.gather(*tasks)
 
+#создаем асинхронную функция для формирование списка задач (страницы 3го уровня)
+async def fun_creater_tasks_3():  
+    #Устанавливаем сессию ClientSession из aiohttp.
+    async with aiohttp.ClientSession() as session:
+        #создаем пустой список tasks 
+        tasks = []
+        c=1
+        for k1,v1 in result.items():
+            for k2,v2 in v1.items():
+                print(k2)
+                task = asyncio.create_task(fun_asy_parser_3page(session, k2,c,v2))
+                tasks.append(task)
+                c+=1
+                print(c)               
+        await asyncio.gather(*tasks)
+
+        
+
 def main():
     print('main')
     curr_date = datetime.datetime.now().strftime('%d_%m_%Y_%H_%M')
@@ -87,24 +130,20 @@ def main():
 
     #запуск асинхронного парсинга   
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(fun_creater_tasks_2())
+    loop.run_until_complete(fun_creater_tasks_2())    
+    loop.run_until_complete(fun_creater_tasks_3())  
 
-    print (*refs_page2, sep = "\n") # печать результатов
+    
+
+    print_d(result)
+    
+    
 
     finish_time = time.time() - start_time #общее время выполнения скрипта
     print(f'Затраченное время: {finish_time}')
     print('************************************************')
     print('*****************FINISH*************************')
     print('************************************************')
-    # for key, value in result.items():
-    #     print(key)
-    #     print(*value, sep = "\n")
-    #print(result)
-
-    for key, value in result.items():
-        print(key)
-        print(value)
-
 
 if __name__ == '__main__': 
     #позволяет выполнять main только при выполнении данного модуля
