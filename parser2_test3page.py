@@ -27,12 +27,19 @@ print('--------------------------')
 def fun_parser_homepage(url):    
     response = requests.get(url=url, headers=headers)
     soup = BeautifulSoup(response.text, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python    
-    refs = soup.find('div', class_= "col-sm-6 text-right").get_text() #find('h1')#
-    print(refs)
-    p1 = refs.find('всего')
-    p2 = refs.find('стр')
-    pages = int(refs[p1+6:p2-1])
-    print(pages)
+    refs = soup.find_all('h3') #поиск все элементов 
+    #print(refs)
+    for link in refs:
+        print(link.find('a').get('href'))
+        #refs_homepage.append(link.find('h3').get('href')) #копируем в список все найденные ссылки
+    print(refs_homepage)
+    # refs = soup.find_all('div', class_= "caption").get_text() #find('h1')#
+
+    # print(refs)
+    # p1 = refs.find('всего')
+    # p2 = refs.find('стр')
+    # pages = int(refs[p1+6:p2-1])
+    # print(pages)
     #print(refs[p1+6:p2-1])
     
 
@@ -41,8 +48,8 @@ def main():
     curr_date = datetime.datetime.now().strftime('%d_%m_%Y_%H_%M')
     print (f'текущая дата {curr_date}')
 
-    url = 'https://chastotnik.shop/index.php?route=product/category&path=1351_1403_1404'
-    url = 'https://chastotnik.shop/index.php?route=product/category&path=1351'
+    #url = 'https://chastotnik.shop/index.php?route=product/category&path=1351_1403_1404'
+    url = 'https://chastotnik.shop/ustrojstva-plavnogo-puska-abb-seriya-pse'
     fun_parser_homepage(url)
     
 

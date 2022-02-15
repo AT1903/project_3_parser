@@ -81,28 +81,47 @@ async def fun_asy_parser_3page(session, url,num,d):
         soup = BeautifulSoup(response_text, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python             
         refs1 = soup.find('div', class_= "card card-category").find('h1').text #поиск названия страницы 2 го уровня
         print (refs1) #вывод обнаруженного названия - для информации        
-        d[refs1]=dict() #создание ключа словаря 2 го уровня        
+        d[refs1]=dict() #создание ключа словаря 3 го уровня        
         try:
             refs = soup.find('div', class_= "card card-subcategory").find_all('a') #поиск всех элементов типа "а" со страницы 2
             for link in refs:
                 d[refs1][link.get('href')]=dict()
-            print(f'обработал {num} из {len(d)} результатов')
+            print(f'обработал {num} из {len(d[refs1])} результатов')
         except:
             d[refs1]={'Данные отсутсвуют'}
-            print(refs1,'Данные отсутсвуют',num)
+            print(refs1,'Данные отсутствуют',num)
 
 #Асинхронная функция парсинга ссылок со страницы 4-го уровня
 async def fun_asy_parser_4page(session, url,num,d):
     async with session.get(url=url, headers=headers) as response:
         response_text = await response.text() #await означает что при выполнение следующего за ней кода возможно переключение на другую сопрограмму
         soup = BeautifulSoup(response_text, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python
-        r = soup.find('div', class_= "col-sm-6 text-right").get_text()
+        
+        #поиск названия
+        refs1 = soup.find('div', class_= "card card-category").find('h1').text #поиск названия страницы 2 го уровня
+        print (refs1) #вывод обнаруженного названия - для информации  
+        d[refs1]=dict() #создание ключа словаря 4 го уровня  
+
+        #поиск максимальной страницы
+        r = soup.find('div', class_= "col-sm-6 text-right").get_text() 
         p1 = r.find('всего')
         p2 = r.find('стр')
         pages_count = int(r[p1+6:p2-1])
         print('количество страниц', pages_count, ' - ', url)
         for i in range(1,pages_count+1):
             print(f'{url}?page={i}')
+            url2 = f'{url}?page={i}'
+
+            async with session.get(url=url2, headers=headers) as response2:
+                response_text2 = await response2.text() #await означает что при выполнение следующего за ней кода возможно переключение на другую сопрограмму
+                soup2 = BeautifulSoup(response_text2, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python
+                refs2 = soup2.find_all('h3')
+                for link in refs2:
+                    d[refs1][link.find('a').get('href')]=dict()
+                print(f'обработал {num} из {len(d[refs1])} результатов')
+                # except:
+                #     d[refs1]={'Данные отсутствуют'}
+                #     print(refs1,'Данные отсутствуют',num)
 
 
 
@@ -219,7 +238,7 @@ def main():
 
     
 
-    #print_d(result)
+    print_d(result)
     
     
 
