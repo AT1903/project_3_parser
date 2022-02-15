@@ -27,12 +27,12 @@ print('--------------------------')
 def fun_parser_homepage(url):    
     response = requests.get(url=url, headers=headers)
     soup = BeautifulSoup(response.text, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python    
-    refs = soup.find_all('h3') #поиск все элементов 
-    #print(refs)
-    for link in refs:
-        print(link.find('a').get('href'))
-        #refs_homepage.append(link.find('h3').get('href')) #копируем в список все найденные ссылки
-    print(refs_homepage)
+    refs = soup.find('div', class_= "tab-pane active") #поиск все элементов 
+    print(refs.text.lstrip('\n'))#.splitlines())
+    # for link in refs:
+    #     print(link.find('a').get('href'))
+    #     #refs_homepage.append(link.find('h3').get('href')) #копируем в список все найденные ссылки
+    # print(refs_homepage)
     # refs = soup.find_all('div', class_= "caption").get_text() #find('h1')#
 
     # print(refs)
@@ -49,7 +49,7 @@ def main():
     print (f'текущая дата {curr_date}')
 
     #url = 'https://chastotnik.shop/index.php?route=product/category&path=1351_1403_1404'
-    url = 'https://chastotnik.shop/ustrojstva-plavnogo-puska-abb-seriya-pse'
+    url = 'https://chastotnik.shop/ustrojstva-plavnogo-puska-prostar-seriya-prs3-model-prs-3011'
     fun_parser_homepage(url)
     
 
