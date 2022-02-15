@@ -24,25 +24,27 @@ print('-----start parser---------')
 print('--------------------------')
 
 #Функция парсинга ссылок с главной страницы
-def fun_parser_homepage():
-    url='https://chastotnik.shop/index.php?route=product/category&path=1351_1508'
+def fun_parser_homepage(url):    
     response = requests.get(url=url, headers=headers)
     soup = BeautifulSoup(response.text, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python    
-    refs = soup.find('div', class_= "card card-category").find('h1')#    
-    print(refs.text)
-    # for link in refs: refs_homepage.append(link.get('href')) #копируем в список все найденные ссылки
-    # print (*refs_homepage, sep = "\n") # печать результатов
+    refs = soup.find('div', class_= "col-sm-6 text-right").get_text() #find('h1')#
+    print(refs)
+    p1 = refs.find('всего')
+    p2 = refs.find('стр')
+    pages = int(refs[p1+6:p2-1])
+    print(pages)
+    #print(refs[p1+6:p2-1])
+    
 
 def main():
     print('main')
     curr_date = datetime.datetime.now().strftime('%d_%m_%Y_%H_%M')
     print (f'текущая дата {curr_date}')
 
-    fun_parser_homepage()
+    url = 'https://chastotnik.shop/index.php?route=product/category&path=1351_1403_1404'
+    url = 'https://chastotnik.shop/index.php?route=product/category&path=1351'
+    fun_parser_homepage(url)
     
-    # for r in refs_homepage:
-    #     fun_parser_2page(r)#refs_homepage[0])
-    # print (*refs_page2, sep = "\n") # печать результатов
 
     print (*refs_page2, sep = "\n") # печать результатов
 
@@ -50,8 +52,7 @@ def main():
     print(f'Затраченное время: {finish_time}')
     print('************************************************')
     print('************************************************')
-    print('************************************************')
-
+    
 
 if __name__ == '__main__': 
     #позволяет выполнять main только при выполнении данного модуля
