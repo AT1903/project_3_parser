@@ -1,6 +1,17 @@
 import csv
 import time
 import datetime
+list1 = list()
+list1=[]
+#заполнение списк\
+l=[]
+def d_list(d):        
+    for key, value in d.items():
+        l.append(key)
+        if isinstance(value, dict): # вернет True, если проверяемый объект object является экземпляром словаря
+            return d_list(value)
+        else:
+            return (l)
 
 d= {'Устройства плавного пуска': {'https://chastotnik.shop/ustrojstva-plavnogo-puska-abb': 
     {'Устройства плавного пуска ABB': {'https://chastotnik.shop/ustrojstva-plavnogo-puska-abb-seriya-pse': 
@@ -21,22 +32,14 @@ d= {'Устройства плавного пуска': {'https://chastotnik.sho
     'Производитель', 'ABB', 'Рабочая температура, °С', '-25...+60', 'Серия', 'PSE', 'Тип управления', 
     'Цифровой', 'Толчковый режим', '+', 'Торможение постоянным током', '-',
     'Требуемый пусковой ток, % от номинал.', '400','Фазность (количество фаз)', '3']}}}}}}
-
+list1 = [['11'],['12'],['13']],[['21'],['22'],['23']]
 curr_date = datetime.datetime.now().strftime('%d_%m_%Y_%H_%M')
 print (f'текущая дата {curr_date}')
 cur_time = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M")
+print (list1)
 
-with open(f"out{cur_time}_async.csv", "w") as file:
-        writer = csv.writer(file)
+print(*d_list(d), sep = '\n')
 
-        writer.writerow(
-            (
-                "Название книги",
-                "Автор",
-                "Издательство",
-                "Цена со скидкой",
-                "Цена без скидки",
-                "Процент скидки",
-                "Наличие на складе"
-            )
-        )
+# with open(f"out{cur_time}_async.csv", "w") as file:
+#         writer = csv.writer(file)
+#         writer.writerow(list1)

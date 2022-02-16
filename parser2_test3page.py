@@ -29,6 +29,7 @@ print('--------------------------')
 print('-----start parser---------')
 print('--------------------------')
 
+#печать словаря с отступами
 def print_d(d, indent=0):
     s = "...."
     for key, value in d.items():
