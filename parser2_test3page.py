@@ -88,7 +88,7 @@ def main():
     url = 'https://chastotnik.shop/ustrojstva-plavnogo-puska-abb-seriya-pse-model-pse105-600-70'
     list1=(fun_parser_homepage(url))
     d_find(dict1,list1)
-    #print(dict1)
+    print(dict1)
     print_d(dict1)
     #print(*list1, sep = "\n")
 
