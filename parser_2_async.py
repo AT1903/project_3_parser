@@ -41,6 +41,15 @@ print('--------------------------')
 print('-----start parser---------')
 print('--------------------------')
 
+#функция удаления переноса строки
+def del_n(str):
+    sy = '\n'
+    str = str.replace( 2*sy, sy)
+    if 2*sy in str:
+        return del_n(str)
+    else:
+        return str
+
 #функция вывода вложенных словарей
 def print_d(d, indent=0):
     s = "...."
@@ -122,6 +131,21 @@ async def fun_asy_parser_4page(session, url,num,d):
                 print('2======', d[refs1][link.find('a').get('href')])
                 for k in d[refs1]:
                     print(k)
+                    async with session.get(url=k, headers=headers) as response3:
+                        response_text3 = await response3.text()                       
+                        soup3 = BeautifulSoup(response_text3, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python
+
+                        refs3 = soup3.find('div', class_= "product-info").find('h1').text #поиск названия    
+                        d[refs1][link.find('a').get('href')].append(refs3)
+
+                        refs3 = soup3.find('div', class_= "tab-pane active").text #поиск описания    
+                        d[refs1][link.find('a').get('href')].append(del_n(refs3.lstrip()).replace('\n ', '\n'))
+
+                        refs3 = soup3.find_all('div', class_ = 'attr-td')         #поиск характеристик
+                        for l in (refs3):        
+                            d[refs1][link.find('a').get('href')].append(l.text.replace(';',','))
+                        
+                        print( '<====>',d[refs1][link.find('a').get('href')])
 
                 # except:
                 #     d[refs1]={'Данные отсутствуют'}
