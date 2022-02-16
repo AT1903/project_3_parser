@@ -48,7 +48,7 @@ def del_n(str):
     else:
         return str
 
-#заполнение словаря
+#заполнение словаря списком ссылок(последний уровень)
 def d_find(d, l):    
     for key, value in d.items():        
         if isinstance(value, dict): # вернет True, если проверяемый объект object является экземпляром словаря
@@ -70,7 +70,7 @@ def fun_parser_homepage(url):
 
     refs = soup.find_all('div', class_ = 'attr-td')         #поиск характеристик
     for l in (refs):        
-        out.append(l.text)
+        out.append(l.text.replace(';',','))
     return out
 
 

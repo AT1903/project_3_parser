@@ -117,8 +117,12 @@ async def fun_asy_parser_4page(session, url,num,d):
                 soup2 = BeautifulSoup(response_text2, 'lxml')  #lxml это быстрая и гибкая библиотека для обработки разметки XML и HTML на Python
                 refs2 = soup2.find_all('h3')
                 for link in refs2:
-                    d[refs1][link.find('a').get('href')]=dict()
+                    d[refs1][link.find('a').get('href')]=[]
                 print(f'обработал {num} из {len(d[refs1])} результатов')
+                print('2======', d[refs1][link.find('a').get('href')])
+                for k in d[refs1]:
+                    print(k)
+
                 # except:
                 #     d[refs1]={'Данные отсутствуют'}
                 #     print(refs1,'Данные отсутствуют',num)
@@ -248,7 +252,7 @@ def main():
     print('*****************FINISH*************************')
     print('************************************************')
     
-    print(result)
+    #print(result)
 
 if __name__ == '__main__': 
     #позволяет выполнять main только при выполнении данного модуля
